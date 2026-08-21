@@ -1,0 +1,25 @@
+{
+  // Cloudflare Workers with static assets.
+  //
+  // The build that feeds this is `npm run build:cf`, which uses the
+  // `cloudflare` configuration in angular.json so the server entry is the
+  // Workers one rather than the Express one used locally.
+  //
+  // Assets are served first and never reach the Worker; only what is left —
+  // the rendered routes — invokes it. That is why the browser directory has
+  // no index.html: with outputMode "server" Angular emits index.csr.html and
+  // expects the server to render "/". A static-only deploy 404s at the root
+  // for exactly that reason.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portafolio-web",
+  "main": "dist/portafolio-web/server/server.mjs",
+  "compatibility_date": "2026-08-21",
+  // Angular's server polyfills reach for a few Node built-ins.
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "dist/portafolio-web/browser"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

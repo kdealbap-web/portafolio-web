@@ -102,14 +102,43 @@ design/tools/        the generators above
 
 ## Deploying
 
-The domain is on Cloudflare and the apex has no record yet. Deploying the SSR
-build to Workers needs the server entry adapted first: `src/server.ts` is
-Node/Express — `AngularNodeAppEngine`, `node:path`, `app.listen()` — and
-Workers needs `AngularAppEngine` behind a `fetch` handler.
+Cloudflare Workers with static assets. `npm run build:cf` produces it:
 
-Prerendering to static Pages would deploy today but would make the page lie:
-the copy says the server checks each address while it renders, and a
-prerendered check is frozen at build time.
+```bash
+npm run build:cf     # ng build --configuration cloudflare, then the worker patch
+npx wrangler dev     # run it locally in workerd, the same runtime Cloudflare uses
+npx wrangler deploy  # or let the Git integration build it
+```
+
+Cloudflare panel: build command `npm run build:cf`, and leave the output
+directory empty — `wrangler.jsonc` declares both the worker entry and the
+assets directory, so Cloudflare reads it rather than guessing.
+
+Three things had to be true before this worked, and each was a real failure
+first:
+
+**A static deploy 404s at the root.** With `outputMode: "server"` Angular emits
+`index.csr.html`, not `index.html`, because the server is supposed to render
+`/`. Point Pages at the browser directory and there is no index to serve.
+
+**The Node entry cannot run in a Worker.** `src/server.ts` is Express and stays
+for local use; `src/server.worker.ts` is the Workers entry, selected by the
+`cloudflare` configuration in angular.json. It is the same engine —
+`AngularAppEngine.handle` takes a `Request` and returns a `Response` — without
+the Node server around it.
+
+**Angular's server bundle will not load in workerd unadjusted.** Every server
+bundle carries `createRequire(import.meta.url)`, and `import.meta.url` is
+undefined there, so the runtime fails to start. `design/tools/patch-worker.mjs`
+replaces that one expression; `build:cf` runs it. The builder's `define` option
+cannot do this — Angular injects the shim after esbuild has run.
+
+**Hostnames are an allowlist.** Angular refuses to render for a `Host` it does
+not know, which is its SSRF defence. The list lives in
+`architect.build.options.security.allowedHosts` in angular.json and it is
+checked twice — against the `Host` header, which carries a port, and against
+the URL hostname, which does not. `*.pages.dev` covers preview deployments.
+A new hostname that answers 400 belongs in that list.
 
 ## Content rules
 

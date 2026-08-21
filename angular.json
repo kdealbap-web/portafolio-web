@@ -38,10 +38,15 @@
             "security": {
               "allowedHosts": [
                 "kdealbap.com",
-                "*.kdealbap.com",
-                "localhost",
+                "www.kdealbap.com",
+                "*.pages.dev",
                 "*.workers.dev",
-                "*.pages.dev"
+                "localhost",
+                "127.0.0.1",
+                "localhost:8799",
+                "127.0.0.1:8799",
+                "localhost:4000",
+                "localhost:4200"
               ]
             },
             "ssr": {
@@ -73,6 +78,24 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "cloudflare": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kB",
+                  "maximumError": "16kB"
+                }
+              ],
+              "outputHashing": "all",
+              "ssr": {
+                "entry": "src/server.worker.ts"
+              }
             }
           },
           "defaultConfiguration": "production"

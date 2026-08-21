@@ -62,3 +62,6 @@ Thumbs.db
 # phone number, which is not going into a public history where removing it
 # means rewriting commits. Verify the PDF, then delete this line.
 /public/kevin-de-alba-cv.pdf
+
+# Local workerd state from `wrangler dev`.
+/.wrangler
