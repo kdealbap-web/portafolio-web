@@ -37,11 +37,23 @@ const ALLOWED_HOSTS = [
 
 const angularApp = new AngularAppEngine({ allowedHosts: ALLOWED_HOSTS });
 
+/** What Pages hands the Worker: a binding that serves the build output. */
+interface Env {
+  ASSETS: { fetch(request: Request): Promise<Response> };
+}
+
 export default {
-  async fetch(request: Request, env: unknown, ctx: unknown): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: unknown): Promise<Response> {
     const response = await angularApp.handle(request, { env, ctx });
-    // Null means no Angular route matched, and with one route on this site
-    // that is a genuine 404 rather than something to paper over.
-    return response ?? new Response('Not found', { status: 404 });
+    if (response) {
+      return response;
+    }
+
+    // Every request reaches this Worker, including the ones for files —
+    // that is how `_worker.js` works in Pages, and it is the part that is easy
+    // to get wrong: returning 404 here renders the page perfectly and then
+    // 404s its own favicon, icons, manifest and every capture on it.
+    // Anything Angular does not render belongs to the static assets.
+    return env.ASSETS.fetch(request);
   },
 };

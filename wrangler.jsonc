@@ -1,25 +1,19 @@
 {
-  // Cloudflare Workers with static assets.
+  // Cloudflare Pages configuration.
   //
-  // The build that feeds this is `npm run build:cf`, which uses the
-  // `cloudflare` configuration in angular.json so the server entry is the
-  // Workers one rather than the Express one used locally.
+  // This is deliberately the Pages shape and not the Workers one. A Pages
+  // project does not read `main` + `assets`; it logs "does not appear to be
+  // valid ... pages_build_output_dir", skips the file, and serves the output
+  // statically — which 404s at the root, because with outputMode "server"
+  // Angular emits index.csr.html and expects a server to render "/".
   //
-  // Assets are served first and never reach the Worker; only what is left —
-  // the rendered routes — invokes it. That is why the browser directory has
-  // no index.html: with outputMode "server" Angular emits index.csr.html and
-  // expects the server to render "/". A static-only deploy 404s at the root
-  // for exactly that reason.
+  // The server bundle instead ships inside the output directory as
+  // `_worker.js`, assembled by design/tools/assemble-pages.mjs. Pages picks it
+  // up from there and serves everything else as static assets.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "portafolio-web",
-  "main": "dist/portafolio-web/server/server.mjs",
+  "pages_build_output_dir": "dist/portafolio-web/browser",
   "compatibility_date": "2026-08-21",
   // Angular's server polyfills reach for a few Node built-ins.
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "dist/portafolio-web/browser"
-  },
-  "observability": {
-    "enabled": true
-  }
+  "compatibility_flags": ["nodejs_compat"]
 }
