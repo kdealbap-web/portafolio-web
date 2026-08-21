@@ -1,0 +1,86 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion tokens.
+
+   One scale for the whole site, named for intent rather than for milliseconds,
+   so a call site says what it means: a hover is `fast`, a panel coming forward
+   is `deliberate`, a reveal is `slow`.
+
+   The older `--dur-*` and `--ease-*` names are kept as aliases because they are
+   used across every component. They now point here, so there is a single
+   source of truth and no drift between the two sets.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── duration ─────────────────────────────────────────────────────────── */
+  --t-instant: 90ms; /* state flips: a checkbox, a pressed button */
+  --t-fast: 160ms; /* hover, focus, colour */
+  --t-base: 280ms; /* the default: position, size, opacity */
+  --t-deliberate: 420ms; /* a panel arriving, a section revealing */
+  --t-slow: 640ms; /* the one-off: page intro, first reveal */
+
+  /* ── easing ───────────────────────────────────────────────────────────────
+     Standard for anything that starts and ends on screen. Decelerate for
+     things entering, accelerate for things leaving — an element should slow
+     into place and speed out of the way, never the reverse. */
+  --e-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --e-emphasized: cubic-bezier(0.5, 0, 0.2, 1);
+  --e-decelerate: cubic-bezier(0, 0, 0.24, 1);
+  --e-accelerate: cubic-bezier(0.5, 0, 1, 1);
+  /* A single, restrained overshoot. Used on the plate in the intro and nowhere
+     that a reader has to track text. */
+  --e-spring: cubic-bezier(0.32, 1.45, 0.5, 1);
+
+  /* ── stagger ──────────────────────────────────────────────────────────────
+     Capped on purpose. Past six elements a stagger stops reading as sequence
+     and starts reading as lag, so groups larger than that reveal together. */
+  --stagger: 50ms;
+  --stagger-cap: 6;
+
+  /* ── layers ───────────────────────────────────────────────────────────────
+     Every stacking context on the page, in one list. Anything that needs a
+     z-index takes it from here so two panels can never fight. */
+  --z-base: 1;
+  --z-sticky: 20;
+  --z-rail: 25;
+  --z-progress: 30;
+  --z-skip: 40;
+  --z-veil: 60;
+
+  /* ── aliases (older names, same values) ───────────────────────────────── */
+  --dur-fast: var(--t-fast);
+  --dur: var(--t-base);
+  --dur-slow: var(--t-slow);
+  --ease: var(--e-standard);
+  --ease-in-out: var(--e-emphasized);
+  --ease-spring: var(--e-spring);
+}
+
+/* The reduced-motion contract, in one place.
+   ───────────────────────────────────────────────────────────────────────────
+   It has to apply from two directions: the operating-system setting, and the
+   in-page control for someone whose OS says one thing and who wants another
+   on this site. Duplicating the rules would guarantee the two drift apart, so
+   they are written once here and invoked from both selectors.
+
+   Note what it does *not* do: it never hides content, and it leaves loading
+   indicators legible. Animation stops; information does not. */
+@mixin reduced-motion {
+  scroll-behavior: auto;
+
+  [data-reveal],
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    clip-path: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

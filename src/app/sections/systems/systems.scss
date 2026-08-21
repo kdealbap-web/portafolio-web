@@ -1,0 +1,281 @@
+@use 'mixins' as *;
+
+.systems {
+  padding: var(--section-y) var(--pad-x) 0;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s6);
+  align-items: end;
+  margin-bottom: clamp(24px, 3vw, 44px);
+}
+
+.head__left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.head__kicker {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  color: var(--cyan);
+}
+
+.head__title {
+  @include display(100%, 800);
+  font-size: var(--fs-h2);
+  letter-spacing: -0.012em;
+}
+
+.head__note {
+  max-width: 52ch;
+  font-size: var(--fs-small);
+  color: var(--text-3);
+}
+
+/* ── one case, four compositions ──────────────────────────────────────────
+   The layout is content: the lead system gets the page's full width, the two
+   splits face each other from opposite sides, the Angular project gets a
+   technical panel, and the one without a public capture stays a text note. */
+
+.cases {
+  list-style: none;
+  margin: clamp(28px, 3.4vw, 56px) 0 0;
+  padding: 0;
+}
+
+.case {
+  display: grid;
+  gap: clamp(20px, 2.6vw, 44px);
+  padding: clamp(34px, 4.2vw, 68px) 0;
+  border-top: 1px solid var(--line);
+
+}
+
+.cases > li:last-child .case {
+  border-bottom: 1px solid var(--line);
+}
+
+.ident {
+  grid-area: ident;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.visual {
+  grid-area: visual;
+}
+
+.body {
+  grid-area: body;
+}
+
+.facts {
+  grid-area: facts;
+}
+
+.case--lead {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'ident' 'visual' 'body' 'facts';
+
+  .ident__name {
+    font-size: clamp(28px, 3.8vw, 54px);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 2.6vw, 44px);
+  }
+}
+
+.case--split {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  grid-template-areas: 'ident visual' 'body visual' 'facts visual';
+  align-items: start;
+
+  &.case--mirror {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+    grid-template-areas: 'visual ident' 'visual body' 'visual facts';
+  }
+}
+
+.case--panel {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  grid-template-areas: 'ident visual' 'body visual' 'facts facts';
+  align-items: start;
+
+  .visual {
+    border-left: 1px solid var(--line);
+    padding-left: clamp(16px, 2vw, 32px);
+  }
+}
+
+.case--note {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'ident' 'body' 'visual' 'facts';
+
+  .visual {
+    max-width: 620px;
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(20px, 2.4vw, 40px);
+  }
+}
+
+/* ── identity ─────────────────────────────────────────────────────────── */
+
+.ident__kicker {
+  @include label;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s2);
+  color: var(--cyan);
+}
+
+.ident__num {
+  font-size: 13px;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+}
+
+.ident__name {
+  @include display(100%, 700);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-head);
+  letter-spacing: -0.012em;
+}
+
+.ident__host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  font-family: var(--mono);
+  font-size: var(--fs-data);
+  overflow-wrap: anywhere;
+
+  &--quiet {
+    color: var(--text-3);
+  }
+}
+
+/* ── body fields ──────────────────────────────────────────────────────── */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.field__label {
+  @include label;
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+
+.field__text {
+  max-width: 46ch;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+/* ── facts bar ────────────────────────────────────────────────────────── */
+
+.facts {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+  padding-top: var(--s4);
+  border-top: 1px solid var(--line);
+}
+
+.facts__detail {
+  max-width: 54ch;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--amber);
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px 4px 5px;
+    border-radius: var(--r-sm);
+    background: var(--mat-raised);
+    box-shadow: var(--sh-1);
+    color: var(--text-2);
+    border: 1px solid var(--edge);
+    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+
+  li:hover {
+    color: var(--cyan);
+    border-color: var(--cyan-deep);
+    transform: translateY(-1px);
+  }
+}
+
+@include below($bp-lg) {
+  .case--lead .body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include below($bp-md) {
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s4);
+  }
+
+  .case,
+  .case--split,
+  .case--split.case--mirror,
+  .case--panel,
+  .case--note {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'ident' 'visual' 'body' 'facts';
+  }
+
+  .case--lead .body,
+  .case--note .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .case--panel .visual {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .field__text {
+    max-width: 62ch;
+  }
+}

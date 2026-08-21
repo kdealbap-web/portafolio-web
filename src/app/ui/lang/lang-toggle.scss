@@ -1,0 +1,38 @@
+@use 'mixins' as *;
+
+.switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: repeat(2, 34px);
+  align-items: stretch;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  background: var(--ink-800);
+}
+
+.switch__thumb {
+  position: absolute;
+  inset: 0 50% 0 0;
+  background: var(--cyan);
+  transition: transform var(--dur) var(--ease);
+}
+
+.switch__opt {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  transition: color var(--dur-fast) var(--ease);
+
+  &--on {
+    color: var(--ink-900);
+    font-weight: 600;
+  }
+
+  @include focus-ring;
+}

@@ -1,0 +1,58 @@
+<section class="hero" id="top">
+  <article class="card">
+    <app-field />
+
+    <div class="card__head">
+      <p class="card__eyebrow">
+        <app-icon name="pin" [size]="14" />
+        {{ c().heroEyebrow }}
+      </p>
+      <span class="card__stamp">kdealbap.com</span>
+    </div>
+
+    <div class="card__body">
+      <div class="card__text">
+        <h1 class="card__title">{{ c().heroTitle }}</h1>
+
+        <p class="card__lead">{{ c().heroLead }}</p>
+
+        <!-- One instrument panel of four cells, not four cards: the figures
+             belong to the same reading, so they share one enclosure. -->
+        <dl class="gauge">
+          @for (metric of metrics(); track metric.source + metric.value) {
+            <div class="gauge__cell">
+              <dt class="gauge__value">
+                @if (metric.count) {
+                  <app-counter [to]="metric.count" [suffix]="metric.suffix ?? ''" />
+                } @else {
+                  {{ metric.value }}
+                }
+              </dt>
+              <dd class="gauge__label">{{ metric.text }}</dd>
+            </div>
+          }
+        </dl>
+
+        <div class="card__actions">
+          <a class="button" href="#systems">
+            {{ c().heroPrimary }}
+            <app-icon name="arrow-right" [size]="16" />
+          </a>
+          <a class="button button--ghost" [href]="contact.cv" target="_blank" rel="noopener">
+            <app-icon name="download" [size]="16" />
+            {{ c().heroCv }}
+          </a>
+          <a class="quiet" [href]="contact.linkedin.url" target="_blank" rel="me noopener">
+            <app-icon name="linkedin" [size]="15" />
+            LinkedIn
+            <app-icon name="arrow-up-right" [size]="13" />
+          </a>
+        </div>
+      </div>
+
+      <div class="card__signal">
+        <app-signal />
+      </div>
+    </div>
+  </article>
+</section>

@@ -1,0 +1,86 @@
+@if (current(); as plate) {
+  <figure
+    class="plate"
+    [style.--tone]="plate.tone"
+    [style.--ratio]="ratio()"
+    [attr.role]="many() ? 'group' : null"
+    [attr.aria-roledescription]="many() ? 'carousel' : null"
+    [attr.aria-label]="many() ? label() : null"
+  >
+    <div class="plate__frame">
+      <img
+        class="plate__img"
+        appImageReveal
+        [src]="'/plates/' + plate.base + '-1440.webp'"
+        [srcset]="'/plates/' + plate.base + '-900.webp 900w, /plates/' + plate.base + '-1440.webp 1440w'"
+        sizes="(max-width: 860px) 100vw, 66vw"
+        [width]="plate.width"
+        [height]="plate.height"
+        [alt]="plate.altText"
+        [attr.loading]="priority() ? 'eager' : 'lazy'"
+        [attr.fetchpriority]="priority() ? 'high' : 'auto'"
+        decoding="async"
+      />
+      <span class="plate__tint" aria-hidden="true"></span>
+
+      @if (many()) {
+        <div class="plate__controls">
+          <button type="button" class="ctrl" (click)="go(-1)" [attr.aria-label]="c().sliderPrev">
+            <app-icon name="chevron-left" [size]="16" />
+          </button>
+          <button type="button" class="ctrl" (click)="go(1)" [attr.aria-label]="c().sliderNext">
+            <app-icon name="chevron-right" [size]="16" />
+          </button>
+        </div>
+      }
+    </div>
+
+    <figcaption class="plate__caption">
+      <span class="plate__what" aria-live="polite">{{ plate.captionText }}</span>
+
+      @if (many()) {
+        <span class="dots">
+          @for (item of plates(); track item.base; let i = $index) {
+            <button
+              type="button"
+              class="dot"
+              [class.dot--on]="i === index()"
+              [attr.aria-current]="i === index() ? 'true' : null"
+              [attr.aria-label]="c().captureOf + ' ' + (i + 1) + '/' + plates().length"
+              (click)="select(i)"
+            ></button>
+          }
+          <span class="dots__state">{{ paused() ? 'paused' : 'auto' }}</span>
+        </span>
+      }
+    </figcaption>
+  </figure>
+} @else if (motif() === 'catalogue') {
+  <figure class="plate plate--motif" [style.--ratio]="ratio()">
+    <div class="plate__frame">
+      <!-- No capture exists for a client-hosted deployment, so this is an
+           editorial cover: a catalogue grid narrowing into a single quote. -->
+      <svg class="motif" viewBox="0 0 800 340" role="img" aria-label="Editorial cover: a catalogue grid narrowing into a single quote line.">
+        <g stroke="var(--line-strong)" stroke-width="1" fill="none">
+          @for (row of [0, 1, 2, 3]; track row) {
+            @for (col of [0, 1, 2, 3, 4, 5, 6, 7]; track col) {
+              <rect [attr.x]="40 + col * 68" [attr.y]="40 + row * 52" width="52" height="36" />
+            }
+          }
+        </g>
+        <g fill="var(--cyan-deep)">
+          <rect x="40" y="40" width="52" height="36" />
+          <rect x="176" y="92" width="52" height="36" />
+          <rect x="380" y="144" width="52" height="36" />
+        </g>
+        <path d="M40 268 H760" stroke="var(--amber)" stroke-width="2" />
+        <text x="40" y="300" fill="var(--text-3)" font-family="var(--mono)" font-size="15" letter-spacing="2">
+          CATALOGUE → QUOTE
+        </text>
+      </svg>
+    </div>
+    <figcaption class="plate__caption">
+      <span class="plate__what">{{ c().noCapture }}</span>
+    </figcaption>
+  </figure>
+}

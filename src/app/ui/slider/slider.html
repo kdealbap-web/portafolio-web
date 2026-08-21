@@ -1,0 +1,122 @@
+<section
+  class="slider"
+  role="group"
+  aria-roledescription="carousel"
+  [attr.aria-label]="c().sliderLabel"
+>
+  <div
+    class="viewport"
+    (pointerdown)="onDown($event)"
+    (pointermove)="onMove($event)"
+    (pointerup)="onUp($event)"
+    (pointercancel)="onUp($event)"
+  >
+    <div class="track" [class.track--drag]="dragging()" [style.transform]="shift()">
+      @for (slide of slides(); track slide.id; let i = $index) {
+        <article
+          class="slide"
+          [class.slide--on]="i === index()"
+          [style.--tone]="slide.tone"
+          role="group"
+          aria-roledescription="slide"
+          [attr.aria-label]="i + 1 + ' / ' + total() + ' — ' + slide.name"
+          [attr.inert]="i === index() ? null : ''"
+        >
+          @if (slide.plate) {
+            <img
+              class="slide__img"
+              appImageReveal
+              [src]="'/plates/' + slide.plate.base + '-1440.webp'"
+              [srcset]="
+                '/plates/' + slide.plate.base + '-900.webp 900w, /plates/' + slide.plate.base + '-1440.webp 1440w'
+              "
+              sizes="100vw"
+              [width]="slide.plate.width"
+              [height]="slide.plate.height"
+              [alt]="slide.alt"
+              [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+              [attr.fetchpriority]="i === 0 ? 'high' : 'auto'"
+              decoding="async"
+              draggable="false"
+            />
+            <span class="slide__tint" aria-hidden="true"></span>
+          } @else {
+            <span class="slide__blank" aria-hidden="true"></span>
+          }
+
+          <div class="slide__body">
+            <span class="slide__meta">
+              <span class="slide__num">{{ slide.number }}</span>
+              <span class="slide__kicker">{{ slide.kicker }}</span>
+            </span>
+            <h3 class="slide__name">{{ slide.name }}</h3>
+            <p class="slide__detail">{{ slide.detail }}</p>
+
+            <div class="slide__actions">
+              @if (slide.url) {
+                <a class="act act--primary" [href]="slide.url" target="_blank" rel="noopener">
+                  {{ c().openSite }}
+                  <app-icon name="arrow-up-right" [size]="15" />
+                </a>
+              } @else {
+                <span class="act act--muted">{{ slide.note }}</span>
+              }
+              <a class="act" [href]="'#case-' + slide.id">
+                {{ c().readCase }}
+                <app-icon name="arrow-right" [size]="15" />
+              </a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+
+  <div class="bar">
+    <div class="bar__controls">
+      <button type="button" class="btn" [attr.aria-label]="c().sliderPrev" (click)="go(-1)">
+        <app-icon name="chevron-left" [size]="17" />
+      </button>
+      <button type="button" class="btn" [attr.aria-label]="c().sliderNext" (click)="go(1)">
+        <app-icon name="chevron-right" [size]="17" />
+      </button>
+      <button
+        type="button"
+        class="btn btn--play"
+        [attr.aria-label]="playing() ? c().sliderPause : c().sliderPlay"
+        [attr.aria-pressed]="!playing()"
+        (click)="toggle()"
+      >
+        <app-icon [name]="playing() ? 'pause' : 'play'" [size]="15" />
+      </button>
+    </div>
+
+    <ol class="pager">
+      @for (slide of slides(); track slide.id; let i = $index) {
+        <li>
+          <button
+            type="button"
+            class="page"
+            [class.page--on]="i === index()"
+            [attr.aria-current]="i === index() ? 'true' : null"
+            [attr.aria-label]="c().sliderGoTo + ' ' + slide.name"
+            (click)="select(i)"
+          >
+            <span class="page__num">{{ slide.number }}</span>
+            <span class="page__line" aria-hidden="true">
+              <span
+                class="page__fill"
+                [style.width.%]="i === index() ? progress() : i < index() ? 100 : 0"
+              ></span>
+            </span>
+          </button>
+        </li>
+      }
+    </ol>
+
+    <p class="bar__now" aria-live="polite">
+      <span class="bar__count">{{ index() + 1 }} / {{ total() }}</span>
+      <span class="bar__host">{{ current().url ? current().host : current().note }}</span>
+    </p>
+  </div>
+</section>

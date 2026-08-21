@@ -42,3 +42,23 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Design working files.
+# The generators under design/tools are source and belong in the repo — they
+# rebuild the icon set and the brand marks. The captures are throwaway working
+# output measured in megabytes, and a portfolio repo that ships 11 MB of its
+# own screenshots is making the exact mistake it is meant to demonstrate not
+# making.
+/design/shots
+/design/kdealbap-portfolio.html
+# The design-canvas artboards are superseded by the built site and still carry
+# an old contact card with a personal phone number in it. Working artefacts,
+# not source.
+/design/*.dc.html
+/design/canvas.json
+
+# Held back deliberately, not forgotten.
+# The CV is served by the site and has to ship — but it may carry the personal
+# phone number, which is not going into a public history where removing it
+# means rewriting commits. Verify the PDF, then delete this line.
+/public/kevin-de-alba-cv.pdf

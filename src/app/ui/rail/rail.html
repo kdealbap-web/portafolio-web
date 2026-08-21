@@ -1,0 +1,25 @@
+<div class="progress" aria-hidden="true">
+  <span class="progress__bar" [style.width.%]="progress()"></span>
+</div>
+
+<nav class="rail" [attr.aria-label]="c().langLabel === 'Language' ? 'Sections' : 'Secciones'">
+  <ol class="rail__list">
+    @for (stop of stops; track stop.id) {
+      <li>
+        <a
+          class="stop"
+          [class.stop--on]="active() === stop.id"
+          [href]="'#' + stop.id"
+          [attr.aria-current]="active() === stop.id ? 'true' : null"
+        >
+          <span class="stop__index">{{ stop.index }}</span>
+          <span class="stop__label">{{ c().nav[stop.id] }}</span>
+        </a>
+      </li>
+    }
+  </ol>
+
+  <div class="rail__meter" aria-hidden="true">
+    <span class="rail__meter-fill" [style.height.%]="progress()"></span>
+  </div>
+</nav>

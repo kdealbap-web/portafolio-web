@@ -1,0 +1,122 @@
+@use 'mixins' as *;
+
+/* The reading line. It sits above the masthead material, so it stays legible
+   while the bar behind it blurs whatever is scrolling past. */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 30;
+  height: 2px;
+  background: rgb(0 0 0 / 0.5);
+}
+
+.progress__bar {
+  display: block;
+  height: 100%;
+  background: linear-gradient(to right, var(--cyan-deep), var(--cyan) 65%, var(--amber));
+  box-shadow: 0 0 12px -2px rgb(70 196 214 / 0.7);
+  transition: width 90ms linear;
+}
+
+/* ── the panel ────────────────────────────────────────────────────────────
+   Was a column of 10.5px ticks with the labels hidden until hover, which put
+   the one always-visible control on the page somewhere between decoration and
+   invisible. It is now a floating material panel: labels always set, index
+   figures in mono, and a vertical meter down its right edge that repeats the
+   progress line so the panel states position on its own. */
+
+.rail {
+  @include material(var(--mat-panel), var(--mat-panel-solid), var(--r-lg), var(--sh-3));
+
+  position: fixed;
+  right: clamp(16px, 2vw, 28px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 25;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s3);
+  padding: var(--s3) var(--s3) var(--s3) var(--s4);
+}
+
+.rail__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stop {
+  display: grid;
+  grid-template-columns: 2.6ch 1fr;
+  align-items: center;
+  gap: var(--s3);
+  padding: 7px var(--s3) 7px var(--s2);
+  border-radius: var(--r-sm);
+  color: var(--text-3);
+  border: 1px solid transparent;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+
+  &:hover {
+    color: var(--text);
+    background: rgb(255 255 255 / 0.05);
+  }
+
+  @include focus-ring;
+}
+
+.stop__index {
+  @include data;
+  font-size: 10.5px;
+  opacity: 0.55;
+}
+
+.stop__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The selected stop is a raised pill, the way a selected row reads in a macOS
+   source list — filled, edged, and carrying the accent. */
+.stop--on {
+  color: var(--text);
+  background: var(--cyan-wash);
+  border-color: var(--cyan-line);
+  box-shadow: var(--sh-1);
+
+  .stop__index {
+    color: var(--cyan);
+    opacity: 1;
+  }
+}
+
+/* ── the meter ────────────────────────────────────────────────────────── */
+
+.rail__meter {
+  @include material-well(var(--r-pill));
+  width: 4px;
+  align-self: stretch;
+  overflow: hidden;
+}
+
+.rail__meter-fill {
+  display: block;
+  width: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(to bottom, var(--cyan), var(--cyan-deep));
+  transition: height 90ms linear;
+}
+
+/* The rail is a desktop affordance: on narrow screens the progress line alone
+   carries the reading position, and the masthead carries the jumps. */
+@include below($bp-lg) {
+  .rail {
+    display: none;
+  }
+}

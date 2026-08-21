@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>webp</title>
+<pre id="out">pending</pre>
+<script>
+  const params = new URLSearchParams(location.search);
+  const src = params.get('src');
+  const width = Number(params.get('w') || 1600);
+  const quality = Number(params.get('q') || 0.82);
+  const image = new Image();
+  image.onload = () => {
+    const scale = Math.min(1, width / image.naturalWidth);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(image.naturalWidth * scale);
+    canvas.height = Math.round(image.naturalHeight * scale);
+    canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+    document.getElementById('out').textContent = canvas.toDataURL('image/webp', quality);
+  };
+  image.onerror = (e) => { document.getElementById('out').textContent = 'ERROR ' + src; };
+  image.src = src;
+</script>

@@ -1,0 +1,212 @@
+@use 'mixins' as *;
+
+.signal {
+  @include material(var(--mat-raised), var(--mat-raised-solid), var(--r-md), var(--sh-2));
+  overflow: hidden;
+}
+
+.signal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-bottom: 1px solid var(--hairline);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.signal__title {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-weight: 500;
+  color: var(--cyan);
+}
+
+.signal__at {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* ── the readout ──────────────────────────────────────────────────────────
+   Every row is a measurement and its bar. The gridlines are drawn into each
+   track at the same interval, so five separate tracks line up into one chart
+   without a single extra element. */
+
+.signal__rows {
+  list-style: none;
+  margin: 0;
+  padding: var(--s2) 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--s3) var(--s4);
+
+  &:hover .track__bar {
+    filter: brightness(1.18);
+  }
+}
+
+.row__line {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto auto;
+  gap: var(--s3);
+  align-items: baseline;
+  font-family: var(--mono);
+}
+
+/* A pilot light, not a bullet: filled and lit when the host answered, hollow
+   when there was nothing to ask. */
+.led {
+  width: 9px;
+  height: 9px;
+  align-self: center;
+  border-radius: var(--r-pill);
+  background: var(--cyan);
+  box-shadow: 0 0 0 1px rgb(70 196 214 / 0.28), 0 0 10px -1px rgb(70 196 214 / 0.85);
+
+  &--down {
+    background: var(--amber);
+    box-shadow: 0 0 0 1px rgb(227 155 46 / 0.3), 0 0 10px -1px rgb(227 155 46 / 0.85);
+  }
+
+  &--none {
+    background: none;
+    border: 1px solid var(--text-3);
+    box-shadow: none;
+  }
+}
+
+.row__host {
+  font-size: var(--fs-data);
+  color: var(--text);
+  overflow-wrap: anywhere;
+
+  &--quiet {
+    color: var(--text-2);
+  }
+}
+
+.row__status {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.row__ms {
+  @include data;
+  min-width: 7ch;
+  color: var(--amber);
+  text-align: right;
+}
+
+.row__note {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: right;
+}
+
+.track {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--mat-sunken);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.5);
+  /* The shared axis. One hairline every tick, from the same origin in every
+     row, which is what turns five bars into a readable chart. */
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--hairline) 0 1px,
+    transparent 1px var(--tick, 25%)
+  );
+  overflow: hidden;
+}
+
+.track__bar {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(to right, var(--cyan-deep), var(--cyan));
+  box-shadow: 0 0 10px -3px rgb(70 196 214 / 0.9);
+  transform-origin: left center;
+  animation: extend 760ms var(--ease) 200ms both;
+  transition: filter var(--dur-fast) var(--ease);
+
+  &--down {
+    background: linear-gradient(to right, #6b4a12, var(--amber));
+    box-shadow: none;
+  }
+}
+
+@keyframes extend {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track__bar {
+    animation: none;
+  }
+}
+
+/* ── axis legend ──────────────────────────────────────────────────────── */
+
+.axis {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin: 0;
+  padding: var(--s2) var(--s4) var(--s3);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.axis__what {
+  flex: 1;
+  text-align: center;
+  letter-spacing: 0.12em;
+}
+
+.signal__foot {
+  margin: 0;
+  padding: var(--s4);
+  border-top: 1px solid var(--hairline);
+  background: rgb(0 0 0 / 0.18);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-3);
+
+  strong {
+    color: var(--text-2);
+    font-weight: 600;
+  }
+}
+
+@include below($bp-sm) {
+  .row {
+    padding: var(--s3);
+  }
+
+  .row__host {
+    font-size: 11.5px;
+  }
+
+  .axis__what {
+    display: none;
+  }
+}

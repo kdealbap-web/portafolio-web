@@ -1,0 +1,56 @@
+<section class="signal" aria-labelledby="signal-title">
+  <header class="signal__head">
+    <h2 class="signal__title" id="signal-title">
+      <app-icon name="activity" [size]="14" />
+      {{ c().signalTitle }}
+    </h2>
+    <span class="signal__at">{{ report()?.at ?? c().signalUnavailable }}</span>
+  </header>
+
+  <ol class="signal__rows" [style.--tick.%]="scale()?.tick ?? 25">
+    @for (row of rows(); track row.host) {
+      <li class="row">
+        <div class="row__line">
+          <span
+            class="led"
+            [class.led--down]="row.url && !row.answers"
+            [class.led--none]="!row.url"
+            aria-hidden="true"
+          ></span>
+
+          @if (row.url) {
+            <a class="row__host" [href]="row.url" target="_blank" rel="noopener">{{ row.host }}</a>
+            <span class="row__status">{{ row.status ?? c().signalDown }}</span>
+            <span class="row__ms">{{ row.ms !== null ? row.ms + ' ms' : '—' }}</span>
+          } @else {
+            <span class="row__host row__host--quiet">{{ row.host }}</span>
+            <span class="row__note">{{ row.noteText }}</span>
+          }
+        </div>
+
+        @if (row.width !== null) {
+          <div class="track">
+            <span
+              class="track__bar"
+              [class.track__bar--down]="!row.answers"
+              [style.width.%]="row.width"
+            ></span>
+          </div>
+        }
+      </li>
+    }
+  </ol>
+
+  @if (scale(); as axis) {
+    <p class="axis">
+      <span>0</span>
+      <span class="axis__what">{{ c().signalPlot }}</span>
+      <span>{{ axis.ceiling }} ms</span>
+    </p>
+  }
+
+  <p class="signal__foot">
+    <strong>{{ answering().ok }} / {{ answering().total }} {{ c().signalAnswering }}.</strong>
+    {{ c().signalFoot }}
+  </p>
+</section>

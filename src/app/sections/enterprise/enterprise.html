@@ -1,0 +1,47 @@
+<section class="ent" id="enterprise">
+  <header class="head">
+    <div>
+      <p class="head__kicker">
+        <app-marker icon="layers" index="02" />
+        {{ c().entKicker }}
+      </p>
+      <h2 class="head__title" appReveal="mask-up">{{ c().entTitle }}</h2>
+    </div>
+    <div class="head__who">
+      <p class="head__employer">{{ role().employer }}</p>
+      <p class="head__meta">{{ role().title }} · {{ role().period }}</p>
+      <p class="head__summary">{{ role().summary }}</p>
+    </div>
+  </header>
+
+  <!-- A map, not a timeline: what matters is which tiers I work across, not the
+       order in which I met them. -->
+  <ol class="map" appReveal>
+    @for (layer of layers(); track layer.id; let i = $index) {
+      <li class="layer" [style.--depth]="i">
+        <span class="layer__node" aria-hidden="true"></span>
+        <span class="layer__icon"><app-icon [name]="layer.icon" [size]="17" /></span>
+        <span class="layer__label">{{ layer.label }}</span>
+        <span class="layer__tech">
+          @for (part of layer.techParts; track part) {
+            <app-tech [name]="part" />
+          }
+        </span>
+        <span class="layer__figure">{{ layer.figure ?? '' }}</span>
+        <p class="layer__note">{{ layer.noteText }}</p>
+      </li>
+    }
+  </ol>
+
+  <div class="domains">
+    <h3 class="domains__title">{{ c().entOwn }}</h3>
+    <dl class="domains__list">
+      @for (domain of role().domains; track domain.name) {
+        <div class="domain" appReveal>
+          <dt>{{ domain.name }}</dt>
+          <dd>{{ domain.body }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+</section>

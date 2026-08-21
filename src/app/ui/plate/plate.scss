@@ -1,0 +1,240 @@
+@use 'mixins' as *;
+
+:host {
+  display: block;
+}
+
+.plate {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+/* The capture is the largest surface on the page, so it carries the same
+   corner and the same light edge as the opening card — otherwise the screen
+   reads as one rounded object sitting on a stack of square ones. */
+.plate__frame {
+  position: relative;
+  aspect-ratio: var(--ratio, 21 / 9);
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-xl);
+  background: var(--ink-700);
+  box-shadow: var(--sh-3);
+}
+
+/* ── loading state ────────────────────────────────────────────────────────
+   The skeleton takes the geometry of the capture it is standing in for: the
+   frame already reserves the aspect ratio, so nothing moves when the image
+   lands. The sheen is a single slow pass, not a strobe, and it stops dead
+   under reduced motion — a skeleton has to stay legible as "this is loading",
+   which a static tone does perfectly well. */
+.plate__frame:has(.plate__img[data-img='loading'])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.045) 50%,
+      transparent 80%
+    ),
+    var(--mat-panel-solid);
+  background-size: 220% 100%, 100% 100%;
+  animation: plate-sheen 1.6s var(--e-standard) infinite;
+}
+
+@keyframes plate-sheen {
+  from {
+    background-position: 120% 0, 0 0;
+  }
+  to {
+    background-position: -60% 0, 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plate__frame:has(.plate__img[data-img='loading'])::after {
+    animation: none;
+    background: var(--mat-panel-solid);
+  }
+}
+
+.plate__img[data-img='loading'] {
+  opacity: 0;
+}
+
+.plate__img[data-img='ready'] {
+  animation: plate-in var(--t-slow) var(--e-decelerate) both;
+}
+
+/* If the capture never arrives the frame says so, instead of holding a
+   skeleton that will never resolve. */
+.plate__img[data-img='failed'] {
+  opacity: 0;
+}
+
+.plate__frame:has(.plate__img[data-img='failed'])::after {
+  content: 'capture unavailable';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--mat-panel-solid);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+@keyframes plate-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 12% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Duotone by default: the capture reads as part of this page. Hover or focus
+   hands the project its own colour back. */
+.plate__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: grayscale(1) contrast(1.12) brightness(0.58);
+  transform: scale(1.008);
+  transition: filter var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.plate__tint {
+  position: absolute;
+  inset: 0;
+  background: var(--tone, var(--cyan-deep));
+  mix-blend-mode: color;
+  opacity: 0.42;
+  transition: opacity var(--dur) var(--ease);
+  pointer-events: none;
+}
+
+.plate:hover,
+.plate:focus-within {
+  .plate__img {
+    filter: none;
+    transform: scale(1);
+  }
+
+  .plate__tint {
+    opacity: 0;
+  }
+}
+
+/* ── carousel controls ────────────────────────────────────────────────── */
+
+/* One grouped enclosure over the capture, the way a floating toolbar sits on
+   a macOS window: a single material with hairlines between the buttons. */
+.plate__controls {
+  @include material(var(--mat-panel), var(--mat-panel-solid), var(--r-sm), var(--sh-2));
+  position: absolute;
+  right: var(--s3);
+  bottom: var(--s3);
+  display: flex;
+  overflow: hidden;
+}
+
+.ctrl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 40px;
+  color: var(--text);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+
+  & + & {
+    border-left: 1px solid var(--hairline);
+  }
+
+  &:hover {
+    background: var(--cyan);
+    color: var(--ink-900);
+  }
+
+  @include focus-ring;
+}
+
+.plate__caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+
+.plate__what {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.dot {
+  width: 22px;
+  height: 22px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 9px 2px;
+    border-radius: var(--r-pill);
+    background: var(--line-strong);
+    transition: background var(--dur-fast) var(--ease);
+  }
+
+  &:hover::after {
+    background: var(--text-2);
+  }
+
+  &--on::after {
+    background: var(--amber);
+  }
+
+  @include focus-ring;
+}
+
+.dots__state {
+  @include label;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+}
+
+/* ── editorial cover ─────────────────────────────────────────────────── */
+
+.plate--motif .plate__frame {
+  box-shadow: none;
+  background: var(--ink-800);
+}
+
+.motif {
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  text {
+    font-family: var(--mono);
+  }
+}

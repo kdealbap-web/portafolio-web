@@ -1,0 +1,15 @@
+{
+  "name": "Kevin De Alba — Senior Full-Stack Engineer",
+  "short_name": "Kevin De Alba",
+  "description": "Java, Spring Boot, Angular and Oracle. Five projects in production, checked live on the page.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070e11",
+  "theme_color": "#070e11",
+  "icons": [
+    { "src": "/brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/brand/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/brand/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

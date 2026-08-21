@@ -1,1 +1,183 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'tokens';
+@use 'motion' as motion;
+@use 'mixins' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* The sticky masthead must not cover an anchor target. */
+  scroll-padding-top: 96px;
+}
+
+/* From $bp-lg up the rail is a real floating panel on the right, so the page
+   reserves a gutter for it. Without this it sits on top of the live check.
+   Below that width the rail is hidden and the gutter goes with it.
+
+   The side padding comes down at the same time: the gutter is already holding
+   the right margin, and at the old 96px the content column got narrow enough
+   to break hostnames across two lines. */
+@include above($bp-lg) {
+  :root {
+    --pad-x: clamp(24px, 3.2vw, 52px);
+  }
+
+  body {
+    padding-right: 178px;
+  }
+}
+
+body {
+  margin: 0;
+  overflow-x: clip;
+  background: var(--ink-900);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@include below($bp-sm) {
+  body {
+    font-size: 16px;
+  }
+}
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
+
+  &:hover {
+    color: var(--amber);
+  }
+
+  @include focus-ring;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+
+  @include focus-ring;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--display);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--ink-900);
+}
+
+/* The reveal only animates content that is already in the server's HTML, and it
+   is armed exclusively where scripting is enabled: with JavaScript off the
+   media query is false, so nothing is ever hidden with no way back. */
+@media (scripting: enabled) {
+  [data-reveal] {
+    /* Everything decelerates in: an element should slow into place, never
+       speed into it. The stagger is capped by the directive, so this delay can
+       never run away — five steps of 50 ms is the whole budget. */
+    transition-property: opacity, transform, clip-path;
+    transition-duration: var(--t-deliberate);
+    transition-timing-function: var(--e-decelerate);
+    transition-delay: calc(var(--reveal-i, 0) * var(--stagger));
+  }
+
+  [data-reveal-variant='fade'] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  /* Type rising from behind its own edge. The clip is what separates this from
+     a fade: the letters are cut off rather than transparent, which reads as
+     mechanical precision instead of a dissolve. */
+  /* The vertical slack is deliberate. A heading's descenders and its display
+     face's overshoot both sit outside the content box, so a mask that settles
+     at exactly `inset(0)` shaves the tail off a 'y' or a 'g'. A quarter em on
+     each side clears them while the top edge still does the masking. */
+  [data-reveal-variant='mask-up'] {
+    opacity: 0;
+    clip-path: inset(100% 0 -0.25em 0);
+    transform: translateY(24%);
+    transition-duration: var(--t-slow);
+  }
+
+  /* Generous vertical slack, because this variant is used on containers. A
+     clip-path clips everything inside the element, so an inset that hugs the
+     box would shave the drop shadow off every panel and capture within it —
+     for the whole transition, and then again in the settled state. The wipe
+     only needs to travel horizontally, so the other three edges stay well
+     clear of the content. */
+  [data-reveal-variant='clip-horizontal'] {
+    clip-path: inset(-120px 100% -120px -120px);
+    transition-duration: var(--t-slow);
+  }
+
+  [data-reveal-variant='scale-subtle'] {
+    opacity: 0;
+    transform: scale(0.985) translateY(8px);
+  }
+
+  [data-reveal-variant='line-draw'] {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition-duration: var(--t-slow);
+  }
+
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Only the variants that actually clip get a clip-path in the settled state.
+     Applying `inset(0)` to everything would give every revealed element a
+     clipping context at its border box — which quietly cuts off the outer box
+     shadow on any panel that has one. */
+  [data-reveal-variant='mask-up'][data-reveal='shown'] {
+    clip-path: inset(-0.25em 0 -0.25em 0);
+  }
+
+  [data-reveal-variant='clip-horizontal'][data-reveal='shown'] {
+    clip-path: inset(-120px -120px -120px -120px);
+  }
+}
+
+/* Reduced motion, from either direction.
+
+   The media query is guarded by `:not([data-motion='full'])` so that a visitor
+   who explicitly asked for motion on this site keeps it even when the OS says
+   otherwise — without that guard the media query would silently override their
+   choice and the control in the footer would look broken. */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion='full']) {
+    @include motion.reduced-motion;
+  }
+}
+
+html[data-motion='reduced'] {
+  @include motion.reduced-motion;
+}

@@ -1,0 +1,171 @@
+@use 'mixins' as *;
+
+.notes {
+  padding: var(--section-y) var(--pad-x) 0;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 72px);
+  align-items: end;
+  margin-bottom: clamp(28px, 3.4vw, 52px);
+}
+
+.head__kicker {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  color: var(--cyan);
+  margin-bottom: var(--s3);
+}
+
+.head__title {
+  @include display(100%, 800);
+  font-size: var(--fs-h2);
+  letter-spacing: -0.014em;
+}
+
+.head__note {
+  max-width: 50ch;
+  font-size: var(--fs-small);
+  color: var(--text-3);
+}
+
+/* ── the log ──────────────────────────────────────────────────────────────
+   Entries, not skill chips. The first one carries the decision I get asked
+   about most, so it gets the double column. */
+
+.log {
+  list-style: none;
+  margin: 0 0 clamp(40px, 5vw, 76px);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 40px);
+  grid-auto-flow: dense;
+}
+
+/* Each entry is a card of the log, not a paragraph under a rule: the same
+   material and the same corner the rest of the page uses. */
+.entry {
+  @include material(var(--mat-panel), var(--mat-panel-solid), var(--r-md), var(--sh-1));
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s5);
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+
+  &:hover {
+    border-color: var(--cyan-line);
+    transform: translateY(-2px);
+    box-shadow: var(--sh-2);
+  }
+
+  &:first-child {
+    grid-column: span 2;
+  }
+}
+
+.entry__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+}
+
+.entry__num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--amber);
+}
+
+.entry__label {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--cyan);
+}
+
+.entry__body {
+  font-size: 14.5px;
+  color: var(--text-2);
+}
+
+/* ── stack, as running text with hanging labels ───────────────────────── */
+
+.stack {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.group {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: var(--s5);
+  padding: var(--s4) 0;
+  border-bottom: 1px solid var(--line);
+
+  dt {
+    @include label;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    font-size: 11px;
+    color: var(--text-3);
+  }
+
+  dd {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2);
+  }
+}
+
+@include below($bp-lg) {
+  .log {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include below($bp-md) {
+  .head,
+  .log {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .entry:first-child {
+    grid-column: auto;
+  }
+
+  .group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s2);
+  }
+}
+
+/* The chip is the enclosure; the mark inside brings its own seat and colour.
+   Padding is tighter on the left so the seat sits close to the edge and the
+   whole thing reads as one badge rather than an icon parked in a box. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px 4px 5px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--edge);
+  background: var(--mat-raised);
+  box-shadow: var(--sh-1);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-2);
+  transition: color var(--t-fast) var(--e-standard),
+    border-color var(--t-fast) var(--e-standard), transform var(--t-fast) var(--e-standard);
+}
+
+.chip:hover {
+  color: var(--text);
+  border-color: var(--edge-strong);
+  transform: translateY(-1px);
+}

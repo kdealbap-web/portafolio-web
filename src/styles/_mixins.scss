@@ -1,0 +1,114 @@
+/* Breakpoints. Named for the layout change they trigger, not for devices. */
+$bp-sm: 560px;
+$bp-md: 860px;
+$bp-lg: 1180px;
+$bp-xl: 1440px;
+
+@mixin below($bp) {
+  @media (max-width: $bp) {
+    @content;
+  }
+}
+
+@mixin above($bp) {
+  @media (min-width: $bp + 1px) {
+    @content;
+  }
+}
+
+/* Every focusable thing gets the same ring, in amber so it never collides
+   with the cyan of normal links. */
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+}
+
+@mixin label {
+  font-family: var(--mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@mixin data {
+  font-family: var(--mono);
+  font-size: var(--fs-data);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Display type. Instrument Sans carries no width axis, so the character comes
+   from weight and negative tracking at large sizes. The $stretch argument is
+   kept for call-site compatibility and applied to the body face only. */
+@mixin display($stretch: 100%, $weight: 700) {
+  font-family: var(--display);
+  font-weight: $weight;
+  font-variation-settings: 'wght' $weight;
+}
+
+/* Roboto Flex reacts to optical size and width: wider at display sizes, a
+   touch narrower and larger-eyed in small UI text. */
+@mixin flex-text($opsz: 16, $wdth: 100, $wght: 400) {
+  font-family: var(--body);
+  font-variation-settings: 'opsz' $opsz, 'wdth' $wdth, 'wght' $wght;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Material
+   ───────────────────────────────────────────────────────────────────────────
+   A material is a translucent surface that blurs what is behind it, carries a
+   light edge along its top, and sits at a stated depth. These three mixins are
+   the whole vocabulary — anything that floats above the page uses one of them,
+   so the chrome reads as one system rather than three separate ideas.
+
+   Each starts from an opaque colour and only becomes translucent where the
+   browser actually supports the blur, so a browser without backdrop-filter
+   gets a solid panel rather than a smear of unreadable text.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@mixin material($fill: var(--mat-panel), $solid: var(--mat-panel-solid), $radius: var(--r-lg), $depth: var(--sh-2)) {
+  position: relative;
+  background: $solid;
+  border: 1px solid var(--edge);
+  border-radius: $radius;
+  box-shadow: $depth;
+
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    background: $fill;
+    -webkit-backdrop-filter: var(--blur);
+    backdrop-filter: var(--blur);
+  }
+}
+
+/* A control that lives *inside* a material: one step brighter, one step
+   shallower, so the hierarchy survives without another border colour. */
+@mixin material-control($radius: var(--r-sm)) {
+  background: var(--mat-raised);
+  border: 1px solid var(--edge);
+  border-radius: $radius;
+  box-shadow: var(--sh-1);
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+/* A recessed groove — progress tracks, segmented-control backgrounds. The
+   light edge flips to the bottom, which is what reads as "carved in". */
+@mixin material-well($radius: var(--r-md)) {
+  background: var(--mat-sunken);
+  border: 1px solid rgb(0 0 0 / 0.4);
+  border-radius: $radius;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.55), 0 1px 0 var(--edge);
+}
+
+/* The squircle plate: the logo, the section marker and the seal are the same
+   object at 28px, 44px and 128px. Radius is a percentage of the side, which is
+   what keeps the corner identical at every scale. */
+@mixin plate($size) {
+  width: $size;
+  height: $size;
+  border-radius: var(--r-plate);
+  background: linear-gradient(158deg, #143039 0%, #0b1c22 52%, #071216 100%);
+  box-shadow: inset 0 1px 0 var(--edge-strong), inset 0 0 0 1px rgb(255 255 255 / 0.04),
+    0 2px 8px -3px rgb(0 0 0 / 0.7);
+}

@@ -1,0 +1,60 @@
+<footer class="contact" id="contact">
+  <div class="grid">
+    <div class="pitch">
+      <p class="pitch__kicker">
+        <app-marker icon="mail" index="04" />
+        {{ c().nav.contact }}
+      </p>
+      <h2 class="pitch__title">{{ c().contactTitle }}</h2>
+      <p class="pitch__body">{{ c().contactBody }}</p>
+      <div class="pitch__actions">
+        <a class="button" [href]="'mailto:' + contact.email">
+          <app-icon name="mail" [size]="16" />
+          {{ contact.email }}
+        </a>
+        <a class="button button--ghost" [href]="contact.cv" target="_blank" rel="noopener">
+          <app-icon name="download" [size]="16" />
+          {{ c().contactCv }}
+        </a>
+      </div>
+    </div>
+
+    <dl class="card">
+      <div>
+        <dt><app-icon name="linkedin" [size]="14" />{{ c().cardLinkedin }}</dt>
+        <dd>
+          <a [href]="contact.linkedin.url" target="_blank" rel="me noopener">
+            {{ contact.linkedin.label }}
+            <app-icon name="arrow-up-right" [size]="12" />
+          </a>
+        </dd>
+      </div>
+      <div>
+        <dt><app-icon name="github" [size]="14" />{{ c().cardGithub }}</dt>
+        <dd>
+          <a [href]="contact.github.url" target="_blank" rel="me noopener">
+            {{ contact.github.label }}
+            <app-icon name="arrow-up-right" [size]="12" />
+          </a>
+        </dd>
+      </div>
+      <div>
+        <dt><app-icon name="activity" [size]="14" />{{ c().cardEnglish }}</dt>
+        <dd>{{ local().english }}</dd>
+      </div>
+      <div>
+        <dt><app-icon name="pin" [size]="14" />{{ c().cardCity }}</dt>
+        <dd>{{ local().city }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="foot">
+    <app-seal [size]="108" />
+    <div class="foot__lines">
+      <span>{{ c().footBuilt }}</span>
+      <span>{{ local().degree }}</span>
+      <app-motion-toggle />
+    </div>
+  </div>
+</footer>

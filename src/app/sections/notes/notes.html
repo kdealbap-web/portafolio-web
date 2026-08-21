@@ -1,0 +1,40 @@
+<section class="notes" id="notes">
+  <header class="head">
+    <div>
+      <p class="head__kicker">
+        <app-marker icon="flow" index="03" />
+        {{ c().notesKicker }}
+      </p>
+      <h2 class="head__title" appReveal="mask-up">{{ c().notesTitle }}</h2>
+    </div>
+    <p class="head__note">{{ c().notesNote }}</p>
+  </header>
+
+  <ol class="log">
+    @for (note of notes(); track note.id) {
+      <li class="entry" appReveal="scale-subtle" [revealIndex]="$index">
+        <span class="entry__head">
+          <span class="entry__num">{{ note.number }}</span>
+          <span class="entry__label">{{ note.label }}</span>
+        </span>
+        <p class="entry__body">{{ note.body }}</p>
+      </li>
+    }
+  </ol>
+
+  <dl class="stack">
+    @for (group of groups(); track group.labelText) {
+      <div class="group">
+        <dt>
+          <app-icon [name]="group.icon" [size]="15" />
+          {{ group.labelText }}
+        </dt>
+        <dd>
+          @for (item of group.items; track item) {
+            <span class="chip"><app-tech [name]="item" /></span>
+          }
+        </dd>
+      </div>
+    }
+  </dl>
+</section>

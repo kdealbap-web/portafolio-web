@@ -2,10 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>PortafolioWeb</title>
+  <title>Kevin De Alba — Senior Full-Stack Engineer (Java · Spring Boot · Angular)</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Senior full-stack engineer in Barranquilla, Colombia. Java, Spring Boot, Angular and Oracle. Five projects in production, checked live on this page.">
+  <meta name="author" content="Kevin De Alba">
+  <meta property="og:title" content="Kevin De Alba — Senior Full-Stack Engineer">
+  <meta property="og:description" content="Java, Spring Boot, Angular and Oracle. Five projects in production, checked live on this page.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kdealbap.com/">
+  <meta name="theme-color" content="#070E11">
+  <meta name="color-scheme" content="dark">
+
+  <!-- Every size is rendered at its own resolution rather than scaled from one
+       master, because a 16px favicon downsampled from 512 turns to mush. The
+       .ico carries 16/32/48 for Windows and older browsers; everything modern
+       picks from the PNGs below it. -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="brand/icon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="brand/icon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="brand/icon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="brand/icon-96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="brand/icon-180.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:image" content="https://kdealbap.com/brand/icon-512.png">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=Roboto+Flex:opsz,wdth,wght@8..144,75..125,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    /* The ground the veil stands on, painted before Angular exists.
+
+       Without this the page would paint its content, and the veil would then
+       appear on top of something the visitor had already started reading —
+       worse than no veil at all. So the backdrop goes up with the first frame
+       and the component fades the whole thing out when its signals resolve.
+
+       The animation is a dead-man's switch, not decoration: if the bundle
+       never boots, nothing is left holding a black rectangle over the page.
+       The component normally removes `.intro` long before this fires. */
+    html.intro::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 59;
+      background: #070e11;
+      animation: kda-reveal 360ms ease 2400ms forwards;
+    }
+
+    @keyframes kda-reveal {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html.intro::before { animation-delay: 1400ms; animation-duration: 1ms; }
+    }
+  </style>
+  <script>
+    /* Decides whether the veil runs, before the first paint: once per session,
+       and nothing at all if this script does not run. Reduced motion still
+       gets the veil — it reports real state and carries a status line — it
+       just gets it without any of the movement. */
+    try {
+      if (!sessionStorage.getItem('kda.intro')) {
+        document.documentElement.classList.add('intro');
+        sessionStorage.setItem('kda.intro', '1');
+      }
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

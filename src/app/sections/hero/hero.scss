@@ -1,0 +1,258 @@
+@use 'mixins' as *;
+
+/* ── the opening card ─────────────────────────────────────────────────────
+   The page used to open straight onto the ground: a headline, some figures,
+   and the live check floating beside them with nothing holding the group. It
+   now opens on one raised surface — the portfolio's own cover — with the
+   identity strip, the claim, the instrument panel and the live check all
+   inside the same object. */
+
+.hero {
+  padding: clamp(20px, 3vw, 40px) var(--pad-x) clamp(36px, 4vw, 64px);
+}
+
+.card {
+  @include material(var(--mat-panel), var(--mat-panel-solid), var(--r-xl), var(--sh-3));
+  overflow: hidden;
+  /* A cyan bloom in the upper right, behind the material: the same light the
+     logo plate carries, at page scale. */
+  background-image: radial-gradient(120% 90% at 88% -18%, rgb(70 196 214 / 0.12), transparent 62%);
+}
+
+/* ── identity strip ───────────────────────────────────────────────────── */
+
+.card__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding: var(--s4) clamp(20px, 3vw, 36px);
+  border-bottom: 1px solid var(--hairline);
+  background: rgb(255 255 255 / 0.02);
+}
+
+.card__eyebrow {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0;
+  color: var(--cyan);
+}
+
+.card__stamp {
+  @include data;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+}
+
+/* ── body ─────────────────────────────────────────────────────────────── */
+
+.card__body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+  padding: clamp(28px, 3.4vw, 52px) clamp(20px, 3vw, 36px) clamp(28px, 3.4vw, 44px);
+}
+
+.card__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+
+.card__title {
+  @include display(100%, 700);
+  max-width: 19ch;
+  font-size: var(--fs-hero);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.card__lead {
+  max-width: 60ch;
+  margin: 0;
+  font-size: var(--fs-lead);
+  color: var(--text-2);
+}
+
+/* ── the instrument panel ─────────────────────────────────────────────────
+   Four figures, each traceable to the CV, a repository count or the check
+   beside it. One recessed well, hairlines between the cells — an instrument,
+   not four cards. No progress bars, no percentages of nothing. */
+
+.gauge {
+  @include material-well(var(--r-md));
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: var(--s1) 0 0;
+  overflow: hidden;
+}
+
+.gauge__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  min-width: 0;
+  padding: var(--s4) var(--s4) var(--s4);
+
+  & + & {
+    border-left: 1px solid var(--hairline);
+  }
+}
+
+.gauge__value {
+  @include display(100%, 700);
+  font-size: clamp(22px, 2.1vw, 31px);
+  line-height: 1;
+  color: var(--amber);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.gauge__label {
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+
+/* ── actions ──────────────────────────────────────────────────────────── */
+
+.card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  padding-top: var(--s1);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 46px;
+  padding: 0 var(--s5);
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, #5fd3e3 0%, var(--cyan) 48%, #2fa5b8 100%);
+  box-shadow: var(--sh-1), 0 10px 24px -14px rgb(70 196 214 / 0.9);
+  @include display(100%, 600);
+  font-size: 15px;
+  transition: filter var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+
+  &,
+  &:hover {
+    color: #04171b;
+  }
+
+  &:hover {
+    filter: brightness(1.09);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    filter: brightness(0.96);
+  }
+
+  @include focus-ring;
+
+  &--ghost {
+    @include material-control(var(--r-sm));
+    background-image: none;
+
+    &,
+    &:hover {
+      color: var(--text);
+    }
+
+    &:hover {
+      background: var(--mat-raised);
+      border-color: var(--cyan-line);
+      color: var(--cyan);
+      filter: none;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: 0 var(--s2);
+  min-height: 46px;
+  font-family: var(--mono);
+  font-size: var(--fs-data);
+  color: var(--text-2);
+
+  &:hover {
+    color: var(--cyan);
+  }
+
+  @include focus-ring;
+}
+
+/* ── narrower ─────────────────────────────────────────────────────────── */
+
+@include below($bp-lg) {
+  .card__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card__signal {
+    max-width: 560px;
+  }
+}
+
+@include below($bp-md) {
+  .gauge {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* With two columns the left border has to reset on every odd cell, and the
+     second row needs a rule above it instead. */
+  .gauge__cell {
+    border-left: 1px solid var(--hairline);
+
+    &:nth-child(odd) {
+      border-left: 0;
+    }
+
+    &:nth-child(n + 3) {
+      border-top: 1px solid var(--hairline);
+    }
+  }
+}
+
+@include below($bp-sm) {
+  .hero {
+    padding-inline: var(--s4);
+  }
+
+  .card {
+    border-radius: var(--r-lg);
+  }
+
+  .button {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .quiet {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}

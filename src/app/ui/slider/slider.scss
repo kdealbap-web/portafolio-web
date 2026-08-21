@@ -1,0 +1,333 @@
+@use 'mixins' as *;
+
+.slider {
+  position: relative;
+}
+
+.viewport {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--ink-700);
+  touch-action: pan-y;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.track {
+  display: flex;
+  transition: transform 620ms var(--ease);
+
+  /* While a finger or the pointer is down the track follows it exactly. */
+  &--drag {
+    transition: none;
+  }
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: clamp(280px, 40vw, 520px);
+  overflow: hidden;
+}
+
+/* Same loading contract as the plate: the slide reserves its geometry, the
+   skeleton stands in, and the capture is revealed only once it has decoded. */
+.slide__img[data-img='loading'] {
+  opacity: 0;
+}
+
+.slide:has(.slide__img[data-img='loading'])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mat-panel-solid);
+}
+
+.slide__img[data-img='ready'] {
+  animation: slide-in var(--t-slow) var(--e-decelerate) both;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.slide__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: grayscale(1) brightness(0.38) contrast(1.12);
+  transform: scale(1.04);
+  transition: filter 720ms var(--ease), transform 900ms var(--ease);
+  user-select: none;
+}
+
+.slide__tint {
+  position: absolute;
+  inset: 0;
+  background: var(--tone);
+  mix-blend-mode: color;
+  opacity: 0.55;
+  transition: opacity 720ms var(--ease);
+  pointer-events: none;
+}
+
+/* The active slide is the one in colour: the page hands each project its own
+   identity back the moment it takes the stage. */
+.slide--on {
+  /* Same loading contract as the plate: the slide reserves its geometry, the
+   skeleton stands in, and the capture is revealed only once it has decoded. */
+.slide__img[data-img='loading'] {
+  opacity: 0;
+}
+
+.slide:has(.slide__img[data-img='loading'])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mat-panel-solid);
+}
+
+.slide__img[data-img='ready'] {
+  animation: slide-in var(--t-slow) var(--e-decelerate) both;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.slide__img {
+    filter: grayscale(0.1) brightness(0.6) contrast(1.05);
+    transform: scale(1);
+  }
+
+  .slide__tint {
+    opacity: 0.12;
+  }
+}
+
+.slide__blank {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--line) 70%, transparent) 0 1px,
+      transparent 1px 12px
+    ),
+    var(--ink-800);
+}
+
+.slide__body {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  gap: var(--s2);
+  padding: clamp(18px, 2.4vw, 32px) clamp(20px, 3vw, 42px);
+  background: var(--ink-900);
+  border-top: 1px solid color-mix(in srgb, var(--tone) 55%, transparent);
+}
+
+.slide__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+}
+
+.slide__num {
+  @include label;
+  font-size: 10.5px;
+  color: var(--amber);
+}
+
+.slide__kicker {
+  @include label;
+  font-size: 10.5px;
+  color: var(--cyan);
+}
+
+.slide__name {
+  @include display(100%, 700);
+  font-size: clamp(24px, 3.4vw, 44px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+.slide__detail {
+  max-width: 62ch;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.slide__actions {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  margin-top: var(--s3);
+}
+
+.act {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 44px;
+  padding: 0 var(--s4);
+  border: 1px solid var(--line-strong);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text);
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+
+  &:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  &--primary {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    color: var(--ink-900);
+
+    &:hover {
+      background: var(--text);
+      border-color: var(--text);
+      color: var(--ink-900);
+    }
+  }
+
+  &--muted {
+    border-style: dashed;
+    color: var(--text-3);
+    cursor: default;
+  }
+}
+
+/* ── control bar ──────────────────────────────────────────────────────────── */
+
+.bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s5);
+  padding: var(--s4) 0 0;
+}
+
+.bar__controls {
+  display: flex;
+  gap: var(--s2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+
+  &:hover {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    color: var(--ink-900);
+  }
+
+  &--play {
+    color: var(--amber);
+  }
+}
+
+.pager {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--s3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.page {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 0;
+  text-align: left;
+
+  &__num {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  &__line {
+    display: block;
+    height: 2px;
+    background: var(--line);
+  }
+
+  &__fill {
+    display: block;
+    height: 100%;
+    background: var(--cyan);
+  }
+
+  &:hover &__num {
+    color: var(--text);
+  }
+
+  &--on {
+    .page__num {
+      color: var(--amber);
+    }
+
+    .page__fill {
+      background: var(--amber);
+    }
+  }
+}
+
+.bar__now {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.bar__count {
+  color: var(--text);
+}
+
+.bar__host {
+  color: var(--text-3);
+}
+
+@include below($bp-md) {
+  .bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: var(--s3);
+  }
+
+  .bar__now {
+    grid-column: 1 / -1;
+    justify-items: start;
+    grid-auto-flow: column;
+    gap: var(--s3);
+  }
+
+  .slide__detail {
+    display: none;
+  }
+}

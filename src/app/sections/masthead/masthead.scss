@@ -1,0 +1,256 @@
+@use 'mixins' as *;
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 40;
+  padding: var(--s3) var(--s4);
+  border-radius: 0 0 var(--r-sm) 0;
+  background: var(--amber);
+  color: var(--ink-900);
+  font-family: var(--mono);
+  font-size: var(--fs-data);
+
+  &:focus {
+    left: 0;
+  }
+}
+
+/* ── the bar ──────────────────────────────────────────────────────────────
+   Was a hairline strip with a centred mono nav at 11.5px, which read as a
+   caption floating over the page rather than as the application's own chrome.
+   It is now a proper toolbar: taller, on vibrancy, and built from three groups
+   that each say what they are — identity, position, tools. */
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--s5);
+  align-items: center;
+  padding: var(--s3) var(--pad-x);
+  min-height: 68px;
+  background: var(--mat-bar-solid);
+  border-bottom: 1px solid var(--edge);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.5), 0 12px 32px -24px rgb(0 0 0 / 0.9);
+
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    background: var(--mat-bar);
+    -webkit-backdrop-filter: var(--blur);
+    backdrop-filter: var(--blur);
+  }
+}
+
+/* ── identity ─────────────────────────────────────────────────────────── */
+
+.id {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s1);
+  margin: calc(var(--s1) * -1);
+  border-radius: var(--r-sm);
+  color: var(--text);
+
+  &:hover {
+    color: var(--text);
+  }
+
+  @include focus-ring;
+}
+
+.id__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.id__name {
+  @include display(120%, 600);
+  font-size: 15px;
+  letter-spacing: -0.008em;
+  line-height: 1.1;
+}
+
+.id__domain {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  line-height: 1.1;
+}
+
+/* ── segmented control ────────────────────────────────────────────────────
+   A macOS segmented control: one recessed well, one raised segment selected.
+   The selection comes from the same tracker the rail reads, so the bar and the
+   rail can never disagree about where you are. */
+
+.seg {
+  @include material-well(var(--r-md));
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+}
+
+.seg__item {
+  padding: 7px var(--s4);
+  border-radius: calc(var(--r-md) - 4px);
+  border: 1px solid transparent;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+
+  &:hover {
+    color: var(--text);
+    background: rgb(255 255 255 / 0.05);
+  }
+
+  @include focus-ring;
+}
+
+.seg__item--on {
+  color: var(--text);
+  background: var(--mat-raised);
+  border-color: var(--edge);
+  box-shadow: var(--sh-1);
+
+  &:hover {
+    background: var(--mat-raised);
+  }
+}
+
+/* ── tools ────────────────────────────────────────────────────────────── */
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
+/* The two profile links share one enclosure, the way a grouped toolbar button
+   works: one material, a hairline between them. */
+.tools__group {
+  @include material-control(var(--r-sm));
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+.tools__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 34px;
+  color: var(--text-2);
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+
+  & + & {
+    border-left: 1px solid var(--hairline);
+  }
+
+  &:hover {
+    color: var(--cyan);
+    background: rgb(255 255 255 / 0.06);
+  }
+
+  @include focus-ring;
+}
+
+.cv {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  height: 36px;
+  padding: 0 var(--s4);
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, #5fd3e3 0%, var(--cyan) 48%, #2fa5b8 100%);
+  box-shadow: var(--sh-1), 0 6px 16px -10px rgb(70 196 214 / 0.9);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: filter var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+
+  &,
+  &:hover {
+    color: #04171b;
+  }
+
+  &:hover {
+    filter: brightness(1.09);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    filter: brightness(0.96);
+  }
+
+  @include focus-ring;
+}
+
+/* ── narrower ─────────────────────────────────────────────────────────── */
+
+@include below($bp-lg) {
+  .seg__item {
+    padding: 7px var(--s3);
+  }
+}
+
+@include below($bp-md) {
+  .bar {
+    grid-template-columns: 1fr auto;
+    row-gap: var(--s3);
+    padding-bottom: var(--s3);
+  }
+
+  .seg {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: stretch;
+    justify-content: space-between;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .seg__item {
+    flex: 1 0 auto;
+    text-align: center;
+  }
+}
+
+@include below($bp-sm) {
+  .bar {
+    padding-top: var(--s3);
+    min-height: 0;
+  }
+
+  .id__domain {
+    display: none;
+  }
+
+  /* At this width the two profile links give way: both live in the footer. */
+  .tools__group {
+    display: none;
+  }
+
+  .seg__item {
+    padding: 7px var(--s2);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+  }
+}

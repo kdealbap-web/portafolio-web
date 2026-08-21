@@ -1,0 +1,80 @@
+<section class="systems" id="systems">
+  <header class="head">
+    <div class="head__left">
+      <p class="head__kicker">
+        <app-marker icon="activity" index="01" />
+      </p>
+      <h2 class="head__title" appReveal="mask-up">{{ c().systemsTitle }}</h2>
+    </div>
+    <p class="head__note">{{ c().systemsNote }}</p>
+  </header>
+
+  <!-- The slider is the way in: five systems, one at a time, with the paginator
+       carrying the position. Everything it shows also exists as a case below,
+       so nothing here is the only copy of anything. -->
+  <app-slider />
+
+  <ol class="cases">
+    @for (system of systems(); track system.id) {
+      <li>
+        <article
+          class="case case--{{ system.layout }}"
+          [class.case--mirror]="system.mirror"
+          [id]="'case-' + system.id"
+          [appReveal]="system.reveal"
+        >
+          <div class="ident">
+            <p class="ident__kicker">
+              <span class="ident__num">{{ system.number }}</span>
+              {{ system.kickerText }}
+            </p>
+            <h3 class="ident__name">{{ system.name }}</h3>
+            @if (system.endpoint.url) {
+              <a class="ident__host" [href]="system.endpoint.url" target="_blank" rel="noopener">
+                {{ system.endpoint.host }}
+                <app-icon name="arrow-up-right" [size]="13" />
+              </a>
+            } @else {
+              <span class="ident__host ident__host--quiet">{{ system.noteText }}</span>
+            }
+          </div>
+
+          <div class="visual">
+            <app-plate
+              [plates]="system.plates"
+              [motif]="system.motif"
+              [label]="system.name"
+              [ratio]="
+                system.layout === 'lead' ? '16 / 9' : system.layout === 'panel' ? '5 / 4' : '16 / 10'
+              "
+            />
+          </div>
+
+          <div class="body">
+            <div class="field">
+              <span class="field__label">{{ c().fieldProblem }}</span>
+              <p class="field__text">{{ system.problemText }}</p>
+            </div>
+            <div class="field">
+              <span class="field__label">{{ c().fieldSolution }}</span>
+              <p class="field__text">{{ system.solutionText }}</p>
+            </div>
+            <div class="field">
+              <span class="field__label">{{ c().fieldRole }}</span>
+              <p class="field__text">{{ system.roleText }}</p>
+            </div>
+          </div>
+
+          <div class="facts">
+            <p class="facts__detail">{{ system.detailText }}</p>
+            <ul class="stack">
+              @for (item of system.stack; track item) {
+                <li><app-tech [name]="item" /></li>
+              }
+            </ul>
+          </div>
+        </article>
+      </li>
+    }
+  </ol>
+</section>

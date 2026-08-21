@@ -1,0 +1,54 @@
+<a class="skip" href="#systems">{{ c().skip }}</a>
+
+<header class="bar">
+  <a class="id" href="#top">
+    <app-logo [size]="34" label="" />
+    <span class="id__text">
+      <span class="id__name">Kevin De Alba</span>
+      <span class="id__domain">kdealbap.com</span>
+    </span>
+  </a>
+
+  <nav class="seg" [attr.aria-label]="c().nav.top">
+    @for (segment of segments; track segment.id) {
+      <a
+        class="seg__item"
+        [class.seg__item--on]="active() === segment.id"
+        [href]="'#' + segment.id"
+        [attr.aria-current]="active() === segment.id ? 'page' : null"
+      >
+        {{ c().nav[segment.id] }}
+      </a>
+    }
+  </nav>
+
+  <div class="tools">
+    <div class="tools__group">
+      <a
+        class="tools__icon"
+        [href]="contact.linkedin.url"
+        target="_blank"
+        rel="me noopener"
+        aria-label="LinkedIn"
+      >
+        <app-icon name="linkedin" [size]="16" />
+      </a>
+      <a
+        class="tools__icon"
+        [href]="contact.github.url"
+        target="_blank"
+        rel="me noopener"
+        aria-label="GitHub"
+      >
+        <app-icon name="github" [size]="16" />
+      </a>
+    </div>
+
+    <app-lang-toggle />
+
+    <a class="cv" [href]="contact.cv" target="_blank" rel="noopener">
+      <app-icon name="download" [size]="14" />
+      {{ c().heroCv }}
+    </a>
+  </div>
+</header>

@@ -1,0 +1,171 @@
+@use 'mixins' as *;
+
+.contact {
+  margin-top: var(--section-y);
+  padding: clamp(44px, 5vw, 84px) var(--pad-x) clamp(32px, 3.4vw, 56px);
+  background: var(--ink-800);
+  border-top: 1px solid var(--line);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  gap: clamp(28px, 4.4vw, 78px);
+  align-items: start;
+}
+
+.pitch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+}
+
+.pitch__kicker {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  color: var(--cyan);
+}
+
+.pitch__title {
+  @include display(100%, 800);
+  font-size: clamp(30px, 3.6vw, 48px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+
+.pitch__body {
+  max-width: 54ch;
+  font-size: var(--fs-lead);
+  color: var(--text-2);
+}
+
+.pitch__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 48px;
+  padding: 0 var(--s5);
+  background: var(--cyan);
+  color: var(--ink-900);
+  font-family: var(--mono);
+  font-size: 13.5px;
+  transition: background var(--dur-fast) var(--ease);
+
+  &:hover {
+    background: var(--text);
+    color: var(--ink-900);
+  }
+
+  &--ghost {
+    background: none;
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+
+    &:hover {
+      background: none;
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+  }
+}
+
+.card {
+  margin: 0;
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 12.5px;
+
+  div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+    padding: var(--s4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  div:last-child {
+    border-bottom: 0;
+  }
+
+  dt {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    color: var(--text-3);
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+/* The seal closes the page the way a stamp closes a drawing: once, at the end,
+   beside the colophon rather than floating on its own. */
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+  margin-top: clamp(32px, 4vw, 64px);
+  padding-top: var(--s6);
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.foot__lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s1);
+  margin-left: auto;
+  text-align: right;
+}
+
+@include below($bp-sm) {
+  .foot {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .foot__lines {
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+@include below($bp-lg) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card {
+    max-width: 480px;
+  }
+}
+
+@include below($bp-sm) {
+  .button {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}

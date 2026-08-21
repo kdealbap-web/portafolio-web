@@ -1,0 +1,129 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   kdealbap.com — design tokens.
+
+   Identity: "engineering systems in motion", built as a native application
+   rather than a document. The petrol ground, the technical cyan and the amber
+   reserved for figures are unchanged — they are what the profile sells. What
+   changed is the envelope: surfaces are now materials with a radius, a light
+   edge and real depth, instead of rules on a flat plane.
+
+   The signature is one geometry at three scales: the squircle plate is the
+   logo at 28px, the section marker at 44px and the seal at 128px.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── ground ──────────────────────────────────────────────────────────── */
+  --ink-900: #070e11; /* page ground */
+  --ink-800: #0b1418; /* raised band */
+  --ink-700: #0d171b; /* panel, opaque fallback */
+  --ink-600: #132227; /* panel alternate (ledger zebra) */
+  --line: #1c3238;
+  --line-strong: #24424a;
+
+  /* ── material ────────────────────────────────────────────────────────────
+     Translucent surfaces that sit *over* the ground and blur it. Every one is
+     paired with a light edge on top: that single inset highlight is what makes
+     a panel read as a physical layer instead of a lighter rectangle. Each has
+     an opaque twin for the no-backdrop-filter path. */
+  --mat-bar: rgb(9 19 23 / 0.72); /* the masthead */
+  --mat-panel: rgb(16 30 35 / 0.66); /* floating chrome: rail, cards */
+  --mat-raised: rgb(21 38 44 / 0.82); /* controls inside a panel */
+  --mat-sunken: rgb(4 9 11 / 0.5); /* wells, track grooves */
+
+  --mat-bar-solid: #0a1418;
+  --mat-panel-solid: #101e23;
+  --mat-raised-solid: #15262c;
+
+  --edge: rgb(255 255 255 / 0.08); /* the light edge, top of every material */
+  --edge-strong: rgb(255 255 255 / 0.14);
+  --hairline: rgb(255 255 255 / 0.06); /* separators inside a material */
+
+  --blur: saturate(180%) blur(20px);
+  --blur-soft: saturate(150%) blur(12px);
+
+  /* ── text (all AA or better on --ink-900) ────────────────────────────── */
+  --text: #e8f0f1;
+  --text-2: #9fb6ba;
+  --text-3: #7b959b;
+
+  /* ── accents ─────────────────────────────────────────────────────────── */
+  --cyan: #46c4d6; /* primary: labels, links, live state */
+  --cyan-deep: #1d6b78; /* fills, connector strokes */
+  --cyan-wash: rgb(70 196 214 / 0.14); /* active background, focus glow */
+  --cyan-line: rgb(70 196 214 / 0.34);
+  --blue: #6c8fff; /* structure text, secondary links */
+  --blue-deep: #3b6bf5; /* connectors, diagram fills */
+  --amber: #e39b2e; /* figures only, never decoration */
+
+  /* ── type ────────────────────────────────────────────────────────────────
+     Instrument Sans carries the headings: narrow, crisp joins, and it holds a
+     70px hero without the softness Onest had. Roboto Flex stays for reading —
+     the variable optical-size and width axes are already wired through the
+     mixins. JetBrains Mono replaces Google Sans Code for every figure and
+     label: it is the face an engineer actually reads code in, and it gives the
+     data a different voice from the prose. */
+  --display: 'Instrument Sans', 'Segoe UI', system-ui, sans-serif;
+  --body: 'Roboto Flex', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  --fs-hero: clamp(38px, 5.2vw, 70px);
+  --fs-h2: clamp(26px, 3vw, 40px);
+  --fs-h3: clamp(19px, 1.7vw, 24px);
+  --fs-lead: clamp(17px, 1.35vw, 20px);
+  --fs-body: 17px;
+  --fs-small: 15px;
+  --fs-data: 13px;
+  --fs-label: 11.5px;
+
+  --lh-tight: 0.96;
+  --lh-head: 1.1;
+  --lh-body: 1.62;
+
+  /* ── space ───────────────────────────────────────────────────────────── */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+  --s9: 96px;
+  --s10: 128px;
+
+  --pad-x: clamp(20px, 6.4vw, 96px);
+  --measure: 74ch;
+  --section-y: clamp(56px, 7vw, 116px);
+
+  /* ── shape ───────────────────────────────────────────────────────────────
+     One ratio, five stops. The plate radius is 23.5% of its own side, which is
+     the corner Apple uses on an application icon — it is why the logo, the
+     section marker and the seal read as the same object at three sizes. */
+  --r-xs: 7px; /* chips, ticks, the smallest controls */
+  --r-sm: 11px; /* buttons, icon plates */
+  --r-md: 16px; /* control groups, inner wells */
+  --r-lg: 22px; /* floating panels, the rail */
+  --r-xl: 28px; /* the opening card, capture plates */
+  --r-pill: 999px;
+  --r-plate: 23.5%; /* the squircle, at any size */
+
+  /* ── depth ───────────────────────────────────────────────────────────────
+     Layered, not one blur: a contact shadow to seat the element, a diffuse one
+     to lift it, and the inset light edge that gives it a top surface. */
+  --sh-1: 0 1px 2px rgb(0 0 0 / 0.4), inset 0 1px 0 var(--edge);
+  --sh-2: 0 2px 6px -2px rgb(0 0 0 / 0.55), 0 10px 28px -14px rgb(0 0 0 / 0.8),
+    inset 0 1px 0 var(--edge);
+  --sh-3: 0 4px 10px -4px rgb(0 0 0 / 0.6), 0 30px 70px -34px rgb(0 0 0 / 0.9),
+    inset 0 1px 0 var(--edge-strong);
+  --sh-glow: 0 0 0 1px var(--cyan-line), 0 0 28px -6px rgb(70 196 214 / 0.32);
+  --plate-shadow: var(--sh-3);
+
+  /* ── motion ──────────────────────────────────────────────────────────── */
+  --dur-fast: 140ms;
+  --dur: 320ms;
+  --dur-slow: 640ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.5, 0, 0.2, 1);
+  /* The overshoot macOS uses when a panel or a sheet comes forward. */
+  --ease-spring: cubic-bezier(0.32, 1.45, 0.5, 1);
+}

@@ -1,0 +1,144 @@
+/* One cycle for the whole descent. Long enough that the movement reads as
+   ambient rather than as something asking to be watched. */
+$cycle: 14s;
+
+:host {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Behind the card's content, above its material. */
+  z-index: 0;
+}
+
+.field {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spine {
+  stroke: var(--cyan);
+  stroke-width: 1;
+  stroke-opacity: 0.1;
+}
+
+.tier__rule {
+  stroke: var(--cyan);
+  stroke-width: 1;
+  stroke-opacity: 0.07;
+}
+
+/* The lit pass over a tier as the request reaches it. Each tier is delayed by
+   its own index, so the five light in order down the stack. */
+.tier__live {
+  stroke-width: 1.25;
+  opacity: 0;
+  animation: tier-lit $cycle var(--e-standard) infinite;
+  animation-delay: calc(var(--i) * 0.62s);
+}
+
+.tier__node {
+  fill: var(--cyan);
+  fill-opacity: 0.16;
+}
+
+.tier__stop {
+  fill: var(--cyan);
+  fill-opacity: 0.1;
+  animation: stop-lit $cycle var(--e-standard) infinite;
+  animation-delay: calc(var(--i) * 0.62s + 0.2s);
+}
+
+/* The request itself. It holds at each tier rather than sliding evenly — that
+   pause is the difference between a system doing work and a dot on a rail. */
+.rider {
+  fill: var(--cyan);
+  fill-opacity: 0.5;
+  animation: descend $cycle var(--e-emphasized) infinite;
+}
+
+@keyframes descend {
+  0%,
+  4% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  10%,
+  15% {
+    transform: translateY(80px);
+  }
+  20%,
+  25% {
+    transform: translateY(160px);
+  }
+  30%,
+  35% {
+    transform: translateY(240px);
+  }
+  40%,
+  46% {
+    transform: translateY(320px);
+    opacity: 1;
+  }
+  52%,
+  100% {
+    transform: translateY(320px);
+    opacity: 0;
+  }
+}
+
+@keyframes tier-lit {
+  0%,
+  6% {
+    opacity: 0;
+  }
+  11% {
+    opacity: 0.85;
+  }
+  22% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes stop-lit {
+  0%,
+  8% {
+    fill-opacity: 0.1;
+  }
+  13% {
+    fill-opacity: 0.55;
+  }
+  26%,
+  100% {
+    fill-opacity: 0.1;
+  }
+}
+
+/* The diagram is the content here; the descent is the decoration. So the
+   drawing stays and only the movement stops. */
+@media (prefers-reduced-motion: reduce) {
+  .tier__live,
+  .tier__stop,
+  .rider {
+    animation: none;
+  }
+
+  .rider {
+    fill-opacity: 0.35;
+  }
+}
+
+:host-context(html[data-motion='reduced']) {
+  .tier__live,
+  .tier__stop,
+  .rider {
+    animation: none;
+  }
+}

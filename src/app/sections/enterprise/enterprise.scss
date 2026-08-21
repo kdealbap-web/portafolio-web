@@ -1,0 +1,238 @@
+@use 'mixins' as *;
+
+.ent {
+  padding: var(--section-y) var(--pad-x) 0;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 72px);
+  align-items: end;
+  margin-bottom: clamp(32px, 4vw, 64px);
+}
+
+.head__kicker {
+  @include label;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  color: var(--cyan);
+  margin-bottom: var(--s3);
+}
+
+.head__title {
+  @include display(100%, 800);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-head);
+  letter-spacing: -0.016em;
+}
+
+.head__who {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.head__employer {
+  @include display(100%, 600);
+  font-size: 17px;
+}
+
+.head__meta {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--amber);
+}
+
+.head__summary {
+  margin-top: var(--s2);
+  max-width: 58ch;
+  font-size: var(--fs-small);
+  color: var(--text-2);
+}
+
+/* ── the layer map ────────────────────────────────────────────────────────
+   A spine with one node per tier. Each row steps right, so the eye reads a
+   descent from the browser to the hypervisor. */
+
+/* The five tiers are one object, so they get one enclosure: a cross section
+   through the platform rather than five rules lying on the page. */
+.map {
+  @include material(var(--mat-panel), var(--mat-panel-solid), var(--r-lg), var(--sh-2));
+  list-style: none;
+  margin: 0 0 clamp(40px, 5vw, 80px);
+  padding: 0;
+  overflow: hidden;
+}
+
+.layer {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px 24px 70px minmax(0, 250px) 84px minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: baseline;
+  padding: var(--s5) var(--s5) var(--s5) calc(var(--s5) + var(--depth, 0) * 14px);
+  transition: background var(--dur-fast) var(--ease);
+
+  & + & {
+    border-top: 1px solid var(--hairline);
+  }
+
+  &:hover {
+    background: rgb(255 255 255 / 0.035);
+
+    .layer__icon {
+      color: var(--amber);
+    }
+  }
+}
+
+/* The spine: a line through the nodes, drawn with the node itself. */
+.layer__node {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  background: var(--cyan);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    width: 1px;
+    background: var(--cyan-deep);
+  }
+
+  &::before {
+    bottom: 9px;
+    height: 26px;
+  }
+
+  &::after {
+    top: 9px;
+    height: 40px;
+  }
+}
+
+.layer:first-child .layer__node::before,
+.layer:last-child .layer__node::after {
+  display: none;
+}
+
+.layer__icon {
+  color: var(--cyan);
+  display: inline-flex;
+  align-items: center;
+}
+
+.layer__label {
+  @include label;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.layer__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1) var(--s4);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--blue);
+}
+
+.layer__figure {
+  @include display(100%, 700);
+  font-size: clamp(20px, 2vw, 28px);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--amber);
+  text-align: right;
+
+  &--none {
+    color: var(--line-strong);
+  }
+}
+
+.layer__note {
+  max-width: 62ch;
+  font-size: 14.5px;
+  color: var(--text-2);
+}
+
+/* ── domains ──────────────────────────────────────────────────────────── */
+
+.domains__title {
+  @include label;
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: var(--s5);
+}
+
+.domains__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 3vw, 52px);
+  margin: 0;
+}
+
+.domain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--line);
+
+  dt {
+    @include display(100%, 600);
+    font-size: 16.5px;
+  }
+
+  dd {
+    margin: 0;
+    max-width: 54ch;
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+}
+
+/* The first two domains carry the regulated work, so they get the wide row. */
+.domain:nth-child(1),
+.domain:nth-child(2) {
+  dd {
+    font-size: 16px;
+  }
+}
+
+@include below($bp-lg) {
+  .layer {
+    grid-template-columns: 22px 24px 64px minmax(0, 1fr) 70px;
+    row-gap: var(--s3);
+  }
+
+  .layer__note {
+    grid-column: 2 / -1;
+  }
+}
+
+@include below($bp-md) {
+  .head,
+  .domains__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .layer {
+    padding-left: 0;
+    grid-template-columns: 18px 22px minmax(0, 1fr) 58px;
+  }
+
+  .layer__tech {
+    grid-column: 2 / -1;
+  }
+
+  .layer__note {
+    grid-column: 2 / -1;
+  }
+}
