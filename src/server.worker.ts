@@ -44,16 +44,21 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env, ctx: unknown): Promise<Response> {
-    const response = await angularApp.handle(request, { env, ctx });
-    if (response) {
-      return response;
+    // Assets first, and the order is the whole point.
+    //
+    // In `_worker.js` mode every request reaches this Worker, files included.
+    // Asking Angular first does not work here: app.routes.server.ts renders
+    // `**`, so the engine answers for `/main-UY2U7YFM.js` too — with the page.
+    // The browser then receives text/html where it asked for a module, refuses
+    // it, and the site is a black screen with a MIME error in the console.
+    //
+    // A missing asset is a 404 from this binding rather than a throw, so that
+    // is the signal to hand the request to Angular.
+    const asset = await env.ASSETS.fetch(request);
+    if (asset.status !== 404) {
+      return asset;
     }
 
-    // Every request reaches this Worker, including the ones for files —
-    // that is how `_worker.js` works in Pages, and it is the part that is easy
-    // to get wrong: returning 404 here renders the page perfectly and then
-    // 404s its own favicon, icons, manifest and every capture on it.
-    // Anything Angular does not render belongs to the static assets.
-    return env.ASSETS.fetch(request);
+    return (await angularApp.handle(request, { env, ctx })) ?? asset;
   },
 };
