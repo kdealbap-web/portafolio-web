@@ -66,9 +66,20 @@ never reaches the browser.
 ```bash
 npm install
 npm start                            # dev server
-npm run build                        # production build, browser + server bundles
-npm run serve:ssr:portafolio-web     # serve the build (PORT=4000 by default)
+
+npm run build                        # the deployable artefact (Cloudflare Pages)
+npx wrangler pages dev               # run it in the Pages runtime, locally
+
+npm run build:node                   # the Node/Express build instead
+npm run serve:ssr:portafolio-web     # serve that one (PORT=4000 by default)
 ```
+
+> `npm run build` produces the Cloudflare artefact on purpose. Cloudflare runs
+> whatever the dashboard's build command says, and that field has reverted on
+> its own more than once — a deployment that silently builds the wrong thing
+> looks exactly like a deployment that works. Making the default command the
+> correct one removes the setting from the equation. Use `build:node` when you
+> want the Express server locally.
 
 > Verify against the production build, not the dev server. `ng serve` can
 > rebuild the server bundle while leaving the browser bundle stale, and the two
@@ -105,16 +116,14 @@ design/tools/        the generators above
 Cloudflare Workers with static assets. `npm run build:cf` produces it:
 
 ```bash
-npm run build:cf     # ng build --configuration cloudflare, then the worker patch
-npx wrangler dev     # run it locally in workerd, the same runtime Cloudflare uses
-npx wrangler deploy  # or let the Git integration build it
+npm run build           # ng build (cloudflare config) -> patch -> assemble
+npx wrangler pages dev  # the Pages runtime, locally
 ```
 
-Cloudflare panel: build command `npm run build:cf`, and leave the output
-directory empty — `wrangler.jsonc` declares both the worker entry and the
-assets directory, so Cloudflare reads it rather than guessing.
+Nothing to configure in the dashboard: `wrangler.jsonc` declares the output
+directory and the build command is the default one.
 
-Three things had to be true before this worked, and each was a real failure
+Four things had to be true before this worked, and each was a real failure
 first:
 
 **A static deploy 404s at the root.** With `outputMode: "server"` Angular emits
@@ -126,6 +135,15 @@ for local use; `src/server.worker.ts` is the Workers entry, selected by the
 `cloudflare` configuration in angular.json. It is the same engine —
 `AngularAppEngine.handle` takes a `Request` and returns a `Response` — without
 the Node server around it.
+
+**A Pages project does not read a Workers configuration.** Given `main` and
+`assets` it logs "does not appear to be valid ... pages_build_output_dir",
+skips the file and publishes statically. Pages runs a Worker when it finds one
+at `_worker.js` inside the output, so `design/tools/assemble-pages.mjs` puts it
+there as a directory — the bundle is several modules that travel together. In
+that mode the Worker receives *every* request, files included, so anything
+Angular does not render is handed to `env.ASSETS`; returning 404 instead serves
+the page perfectly and then 404s its own favicon and every capture on it.
 
 **Angular's server bundle will not load in workerd unadjusted.** Every server
 bundle carries `createRequire(import.meta.url)`, and `import.meta.url` is
